@@ -1,8 +1,8 @@
 # sonarqube
 
-SonarQube installation with PostgreSQL
+SonarQube installation with PostgreSQL. Used all defaults and they can be updated by changing the environment file present in `config/local.env`
 
-## Useful commands
+## How to run
 
 1. Set ulimits since sonarqube uses elasticsearch (once)
 
