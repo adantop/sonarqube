@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+
+  sonarqube:
+    image: sonarqube:latest
+    depends_on:
+      - db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://localhost:${PGPORT}/${POSTGRES_DB}
+      SONAR_JDBC_USERNAME: ${POSTGRES_USER}
+      SONAR_JDBC_PASSWORD: ${POSTGRES_PASSWORD}
+    network_mode: host
+    volumes:
+      - sqdata:/opt/sonarqube/data
+      - sqextensions:/opt/sonarqube/extensions
+      - sqlogs:/opt/sonarqube/logs
+  
+  db:
+    image: postgres
+    environment:
+      - PGPORT=${PGPORT}
+      - PGDATA=${PGDATA}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    network_mode: host
+    volumes:
+      - pgdata:${PGDATA}
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+      - PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}
+    network_mode: host
+    volumes:
+      - pgadmindata:${PGADMIN_DATA}
+
+volumes:
+  pgdata:
+    external: true
+    name: sonarqube-pg-data
+  pgadmindata:
+    external: true
+    name: sonarqube-pgadmin-data
+  sqdata:
+    external: true
+    name: sonarqube-data
+  sqextensions:
+    external: true
+    name: sonarqube-extensions
+  sqlogs:
+    external: true
+    name: sonarqube-logs
